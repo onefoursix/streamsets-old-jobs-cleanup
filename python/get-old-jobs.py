@@ -8,12 +8,13 @@
 #
 # ARGS:           - last_run_threshold - The threshold date to mark Jobs as needing to be cleaned up
 #
-#                 - output_file - The full path for a file where the list of old jobs will be written to
-#                                 The file must not already exist.
+#                 - output_file - The full path to a file where the list of old jobs will be written to.
+#                                 Directories in the path will be created as needed and an existing file
+#                                 of the same name will be overwritten.
 #
 # USAGE:          $ python3 get-old-jobs.py <last_run_threshold> <output_file>
 #
-# USAGE EXAMPLE:  $ python3 get-old-jobs.py 2024-06-30 /Users/mark/old-jobs/old_jobs.json
+# USAGE EXAMPLE:  $ python3 get-old-jobs.py 2024-06-30 2024-06-30 /Users/mark/old-jobs/old_jobs.json
 #
 # PREREQUISITES:
 #
@@ -66,15 +67,28 @@ def validate_last_run_threshold_parameter(last_run_threshold_str):
         last_run_threshold_millis = int(last_run_threshold.timestamp() * 1000)
         return last_run_threshold_millis
 
-# Method that validates that the output file does not exist. Returns True is the output file does not yet exist
-# or False if the file already exists
+# Method that validates the output file and creates the directories in the path if necessary.
+# Returns True if the output file and path are valid or False if not.
 def validate_output_file_parameter(output_file):
-    file_path = Path(output_file)
-    if not file_path.exists():
+
+    # Get output file's path
+    path = Path(output_file)
+
+    # Try to create parent folder if it does not already exist
+    parent_dir = path.parent
+    if parent_dir.is_dir():
         return True
     else:
-        return False
-
+        try:
+            parent_dir.mkdir(parents=True, exist_ok=True)
+            print("Created directory \'{}\'".format(parent_dir))
+            return True
+        except PermissionError:
+            print("Error: Permission denied when trying to create directory \'{}\'".format(parent_dir))
+            return False
+        except OSError as e:
+            print("Error: OS error when trying to create directory \'{}\': {}".format(parent_dir, str(e)))
+            return False
 
 #####################################
 # Main Program
@@ -93,7 +107,7 @@ CRED_TOKEN = os.getenv('CRED_TOKEN')
 if len(sys.argv) != 3:
     print('Error: Wrong number of arguments')
     print('Usage: $ python3 get-old-jobs.py <last_run_threshold> <output_file>')
-    print('Usage Example: $ python3 get-old-jobs.py 2024-06-30 /Users/mark/old-jobs/old_jobs.json')
+    print('Usage Example: $ python3 get-old-jobs.py 2024-06-30 /Users/mark/2024-06-30 /Users/mark/old-jobs/old_jobs.json')
     sys.exit(1)
 
 # Validate the last_run_threshold parameter
@@ -107,7 +121,6 @@ print("---------------------------------")
 # Validate the output_file parameter
 output_file = sys.argv[2]
 if not validate_output_file_parameter(output_file):
-    print("Error: Output file \'{}\' already exists".format(output_file))
     sys.exit(1)
 print("Output file: '{}'".format(output_file))
 
@@ -117,7 +130,7 @@ print('Connecting to Control Hub')
 print("---------------------------------")
 sch = ControlHub(credential_id=CRED_ID, token=CRED_TOKEN)
 
-print('Writing old Job Instances to output file...')
+print('Writing the list of old Job Instances to output file...')
 
 # Loop through all Jobs
 for job in sch.jobs:
