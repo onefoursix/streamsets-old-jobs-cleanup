@@ -157,7 +157,7 @@ with open(output_file, 'w') as output_file:
     for last_run_millis in sorted(old_jobs.keys()):
         job = old_jobs[last_run_millis]
         last_run_finish_time = millis_to_datetime_string(last_run_millis)
-        line = json.dumps({"Last Run": last_run_finish_time, "Job Name": job.job_name, "Job ID": job.job_id}) + '\n'
+        line = json.dumps({"Last Run": last_run_finish_time, "Job Name": job.job_name, "Job ID": job.job_id, "last_run_threshold": last_run_threshold}) + '\n'
         output_file.write(line)
 print("---------------------------------")
 print('Done')

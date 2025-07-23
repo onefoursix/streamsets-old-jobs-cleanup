@@ -11,7 +11,7 @@ This project provides three utility scripts that use the [IBM StreamSets SDK for
 ***
 Note that all three of these scripts could relatively easily be clubbed together into a single script, and one could add a "dry run" feature, but I chose to use three separate scripts so the critical "delete Job" logic (in script #3) could more easily be inspected for correctness.  Additionally, this approach allows the user to edit the list of old Jobs created by the first script to control which Job instances will be deleted by the third script.
 
-Note also that the scripts rely on an external file to pass around the list of Jobs, rather than using Jog tags to flag Job instances for deletion.  This approach is needed because one can't currently add tags to Job Template Instances,
+Note also that the scripts rely on an external file to pass around the list of Jobs, rather than using Jog tags to flag Job instances for deletion.  This approach is needed because one can't currently add tags to Job Template Instances.
 ***
 
 See the details for running each script below.
@@ -33,9 +33,7 @@ See the details for running each script below.
 
 ## Script #1 - get-old-jobs.py
 
-Description:   This script writes a list of INACTIVE Job instances that have not been run within a
-                 user-defined lookback period, for example, a week or a month. The list of old Job instances
-                 is written in JSON format to the local file system
+Description:   This script writes a list of INACTIVE Job instances that have not been run within a user-defined lookback period, for example, a week or a month. The list of old Job instances is written in JSON format to the local file system. Job instances that have not yet been run are ignored as they may have just been created.
 
 Args:
 
@@ -64,11 +62,12 @@ Example Run:
 Here is an example of the data written to the output file <code>old_jobs.json</code>. Note that the Jobs are sorted with the oldest last run time first:
 
 ```
-	{"Last Run": "2023-01-12 19:07:00", "Job Name": "Weather to MongoDB", "Job ID": "338b33a1-1ad6-47a0-9b66-6b685921d3fc:8030c2e9-1a39-11ec-a5fe-97c8d4369386"}
-	{"Last Run": "2023-07-25 14:37:48", "Job Name": "Weather Raw to Refined (1)", "Job ID": "2369189b-3961-4219-a210-05689b780702:8030c2e9-1a39-11ec-a5fe-97c8d4369386"}
-	{"Last Run": "2024-04-30 21:04:42", "Job Name": "Weather Aggregation", "Job ID": "ca42fe53-5d62-42ef-a546-be8d73de24f6:8030c2e9-1a39-11ec-a5fe-97c8d4369386"}
-	{"Last Run": "2024-05-26 10:42:05", "Job Name": "Oracle to Snowflake Bulk Load", "Job ID": "fe9605ab-4912-4181-a315-e49d031a0d50:8030c2e9-1a39-11ec-a5fe-97c8d4369386"}
-	{"Last Run": "2024-05-29 10:08:11", "Job Name": "Oracle CDC to Snowflake", "Job ID": "00d5d750-527e-4ac3-9417-4b0dcbfcab35:8030c2e9-1a39-11ec-a5fe-97c8d4369386"}
+{"Last Run": "2023-01-12 19:07:00", "Job Name": "Weather to MongoDB", "Job ID": {"Last Run": "2023-01-12 19:07:00", "Job Name": "Weather to MongoDB", "Job ID": "338b33a1-1ad6-47a0-9b66-6b685921d3fc:8030c2e9-1a39-11ec-a5fe-97c8d4369386", "last_run_threshold": "2024-06-30"}
+{"Last Run": "2023-07-25 14:37:48", "Job Name": "Weather Raw to Refined (1)", "Job ID": "2369189b-3961-4219-a210-05689b780702:8030c2e9-1a39-11ec-a5fe-97c8d4369386", "last_run_threshold": "2024-06-30"}
+{"Last Run": "2024-04-30 21:04:42", "Job Name": "Weather Aggregation", "Job ID": "ca42fe53-5d62-42ef-a546-be8d73de24f6:8030c2e9-1a39-11ec-a5fe-97c8d4369386", "last_run_threshold": "2024-06-30"}
+{"Last Run": "2024-05-26 10:42:05", "Job Name": "Oracle to Snowflake Bulk Load", "Job ID": "fe9605ab-4912-4181-a315-e49d031a0d50:8030c2e9-1a39-11ec-a5fe-97c8d4369386", "last_run_threshold": "2024-06-30"}
+{"Last Run": "2024-05-29 10:08:11", "Job Name": "Oracle CDC to Snowflake", "Job ID": "00d5d750-527e-4ac3-9417-4b0dcbfcab35:8030c2e9-1a39-11ec-a5fe-97c8d4369386", "last_run_threshold": "2024-06-30"}
+
 ```
 
 ## Script #2 - export-old-jobs.py
