@@ -9,8 +9,8 @@
 # ARGS:           - last_run_threshold - The threshold date to mark Jobs as needing to be cleaned up
 #
 #                 - output_file - The full path to a file where the list of old jobs will be written to.
-#                                 Directories in the path will be created as needed and an existing file
-#                                 of the same name will be overwritten.
+#                                 Directories in the path will be created as needed and if an existing file
+#                                 of the same name exists, it will be overwritten.
 #
 # USAGE:          $ python3 get-old-jobs.py <last_run_threshold> <output_file>
 #
@@ -54,12 +54,10 @@ def validate_last_run_threshold_parameter(last_run_threshold_str):
     try:
         last_run_threshold = datetime.strptime(last_run_threshold_str, "%Y-%m-%d")
     except ValueError:
-        print("Error:  The last_run_threshold parameter \'{}\' is not a valid date in yyyy-mm-dd format".format(last_run_threshold_str))
+        print(f"Error: The last_run_threshold parameter \'{last_run_threshold_str}\' is not a valid date in yyyy-mm-dd format.")
         return None
     if not last_run_threshold.date() <= date.today() - timedelta(days=1):
-        print(
-            "Error: The last_run_threshold parameter \'{}\' is not at least one day earlier than the current date".format(
-                last_run_threshold_str))
+        print(f"Error: The last_run_threshold parameter \'{last_run_threshold_str}\' is not at least one day earlier than the current date.")
         return None
     if last_run_threshold is None:
         return None
@@ -81,13 +79,13 @@ def validate_output_file_parameter(output_file):
     else:
         try:
             parent_dir.mkdir(parents=True, exist_ok=True)
-            print("Created directory \'{}\'".format(parent_dir))
+            print(f"Created directory \'{parent_dir}\'")
             return True
         except PermissionError:
-            print("Error: Permission denied when trying to create directory \'{}\'".format(parent_dir))
+            print(f"Error: Permission denied when trying to create directory \'{parent_dir}\'")
             return False
         except OSError as e:
-            print("Error: OS error when trying to create directory \'{}\': {}".format(parent_dir, str(e)))
+            print(f"Error: OS error when trying to create directory \'{parent_dir}\': {e}")
             return False
 
 #####################################
@@ -116,14 +114,14 @@ last_run_threshold_millis = validate_last_run_threshold_parameter(last_run_thres
 if last_run_threshold_millis is None:
     sys.exit(1)
 print("---------------------------------")
-print("last_run_threshold: '{}'".format(last_run_threshold))
+print(f"last_run_threshold: '{last_run_threshold}'")
 print("---------------------------------")
 
 # Validate the output_file parameter
 output_file = sys.argv[2]
 if not validate_output_file_parameter(output_file):
     sys.exit(1)
-print("Output file: '{}'".format(output_file))
+print(f"Output file: '{output_file}'")
 
 # Connect to Control Hub
 print("---------------------------------")
