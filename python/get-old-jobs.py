@@ -14,7 +14,7 @@
 #
 # USAGE:          $ python3 get-old-jobs.py <last_run_threshold> <output_file>
 #
-# USAGE EXAMPLE:  $ python3 get-old-jobs.py 2024-06-30 2024-06-30 /Users/mark/old-jobs/old_jobs.json
+# USAGE EXAMPLE:  $ python3 get-old-jobs.py 2024-06-30 /Users/mark/old-jobs/old_jobs.json
 #
 # PREREQUISITES:
 #
@@ -107,7 +107,7 @@ CRED_TOKEN = os.getenv('CRED_TOKEN')
 if len(sys.argv) != 3:
     print('Error: Wrong number of arguments')
     print('Usage: $ python3 get-old-jobs.py <last_run_threshold> <output_file>')
-    print('Usage Example: $ python3 get-old-jobs.py 2024-06-30 /Users/mark/2024-06-30 /Users/mark/old-jobs/old_jobs.json')
+    print('Usage Example: $ python3 get-old-jobs.py 2024-06-30 /Users/mark/old-jobs/old_jobs.json')
     sys.exit(1)
 
 # Validate the last_run_threshold parameter
@@ -115,6 +115,7 @@ last_run_threshold = sys.argv[1]
 last_run_threshold_millis = validate_last_run_threshold_parameter(last_run_threshold)
 if last_run_threshold_millis is None:
     sys.exit(1)
+print("---------------------------------")
 print("last_run_threshold: '{}'".format(last_run_threshold))
 print("---------------------------------")
 
@@ -130,7 +131,7 @@ print('Connecting to Control Hub')
 print("---------------------------------")
 sch = ControlHub(credential_id=CRED_ID, token=CRED_TOKEN)
 
-print('Writing the list of old Job Instances to output file...')
+print('Writing the list of old Job Instances to output file (this may take a while)...')
 
 # Loop through all Jobs
 for job in sch.jobs:
@@ -154,6 +155,7 @@ for job in sch.jobs:
                     old_jobs[last_run.finish_time] = job
 
 # Write the old Jobs to the output file in ascending datetime order (i.e. oldest first)
+# This will overwrite a pre-existing file of the same name
 with open(output_file, 'w') as output_file:
     for last_run_millis in sorted(old_jobs.keys()):
         job = old_jobs[last_run_millis]
