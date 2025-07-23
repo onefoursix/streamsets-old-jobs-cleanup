@@ -43,9 +43,9 @@ Args:
 
 - <code>output_file</code> - The full path to a file where the list of old jobs will be written. Directories in the path will be created as needed, and if an existing file of the same name exists, it will be overwritten.
 
-Usage:          $ <code>python3 get-old-jobs.py <last_run_threshold> <output_file></code> 
+Usage:          <code>$ python3 get-old-jobs.py <last_run_threshold> <output_file></code> 
 
-Usage Example:  $ <code>python3 get-old-jobs.py 2024-06-30 /Users/mark/old-jobs/old_jobs.json</code> 
+Usage Example:  <code>$ python3 get-old-jobs.py 2024-06-30 /Users/mark/old-jobs/old_jobs.json</code> 
 
 Example Run:
 ```
@@ -71,8 +71,57 @@ Here is an example of the data written to the output file <code>old_jobs.json</c
 	{"Last Run": "2024-05-29 10:08:11", "Job Name": "Oracle CDC to Snowflake", "Job ID": "00d5d750-527e-4ac3-9417-4b0dcbfcab35:8030c2e9-1a39-11ec-a5fe-97c8d4369386"}
 ```
 
+## Script #2 - export-old-jobs.py
 
+Description:   This script exports the Jobs instances listed in the input file.
 
+Args:
+
+- <code>input_file</code> - A JSON list of Job instances to export (i.e. the output file written by script #1)
+
+- <code>export_dir</code> - The directory to write the exported Jobs instances to. The directory will be created if it does not exist. If the directory does exist, it must be empty
+
+Usage:          <code>$ python3 export-old-jobs.py <input_file> <export_dir></code> 
+
+Usage Example:  <code>$ python3 export-old-jobs.py /Users/mark/old-jobs/old_jobs.json /Users/mark/jobs-export</code> 
+
+Example Run:
+```
+	$ python3 export-old-jobs.py /Users/mark/old-jobs/old_jobs.json /Users/mark/job-exports 
+	---------------------------------
+	input_file: '/Users/mark/old-jobs/old_jobs.json'
+	---------------------------------
+	export_dir: '/Users/mark/job-exports'
+	---------------------------------
+	Connecting to Control Hub
+	---------------------------------
+	Exporting Jobs:
+	---------------------------------
+	Exporting Job 'Weather to MongoDB' into the file '/Users/mark/job-exports/Weather to MongoDB.zip'
+	Exporting Job 'Weather Raw to Refined (1)' into the file '/Users/mark/job-exports/Weather Raw to Refined (1).zip'
+	Exporting Job 'Weather Aggregation' into the file '/Users/mark/job-exports/Weather Aggregation.zip'
+	Exporting Job 'Oracle to Snowflake Bulk Load' into the file '/Users/mark/job-exports/Oracle to Snowflake Bulk Load.zip'
+	Exporting Job 'Oracle CDC to Snowflake' into the file '/Users/mark/job-exports/Oracle CDC to Snowflake.zip'
+	-------------------------------------
+	Done
+
+```
+Here is a directory listing of the exported Jobs:
+
+```
+	$ ls -l ~/job-exports
+	total 888
+	-rw-r--r--@ 1 mark  staff   90414 Jul 23 14:43 Oracle CDC to Snowflake.zip
+	-rw-r--r--@ 1 mark  staff  135891 Jul 23 14:43 Oracle to Snowflake Bulk Load.zip
+	-rw-r--r--@ 1 mark  staff   52758 Jul 23 14:43 Weather Aggregation.zip
+	-rw-r--r--@ 1 mark  staff  105615 Jul 23 14:43 Weather Raw to Refined (1).zip
+	-rw-r--r--@ 1 mark  staff   59928 Jul 23 14:43 Weather to MongoDB.zip
+```
+
+A good test to perform at this point is to manually delete one of those Job instances from Control Hub and to import the corresponding exported file using the Control Hub UI to confirm the exported Job archives are valid, like this:
+
+<img src="images/import1.png" alt="import1.png" width="700"/>
+<img src="images/import2.png" alt="import2.png" width="700"/>
 
 
 

@@ -1,18 +1,14 @@
 #!/usr/bin/env python3
 #################################################################
-# FILE:  export-old-jobs.py
+# FILE:  delete-old-jobs.py
 #
-# DESCRIPTION:    This script exports the Jobs instances listed in the input file.
+# DESCRIPTION:    This script deletes all Jobs instances listed in the input file.
 #
-# ARGS:           - input_file - A JSON list of Job instances to export.
+# ARGS:           - input_file - A JSON list of Job instances to delete.
 #
-#                 - export_dir - The directory to write the exported Jobs instances to.
-#                                The directory will be created if it does not exist.
-#                                If the directory does exist, it must be empty
+# USAGE:          $ python3 delete-old-jobs.py <input_file>
 #
-# USAGE:          $ python3 export-old-jobs.py <input_file> <export_dir>
-#
-# USAGE EXAMPLE:  $ python3 export-old-jobs.py /Users/mark/old-jobs/old_jobs.json /Users/mark/jobs-export
+# USAGE EXAMPLE:  $ python3 delete-old-jobs.py /Users/mark/old-jobs/old_jobs.json
 #
 # PREREQUISITES:
 #
@@ -45,35 +41,6 @@ def validate_input_file_parameter(input_file):
         print(f"Error: Input File \'{input_file}\' either does not exist or is not readable")
         return False
 
-# Method that validates that the directory specified in the export_dir command line parameter either
-# does not exist or exists but is an empty dir. If the directory does not exist it will be created.
-# Returns True if the directory is OK or False if not.
-def validate_export_dir_parameter(export_dir):
-
-    # If export_dir already exists...
-    if os.path.isdir(export_dir):
-        # ... make sure it is empty
-        if os.listdir(export_dir):
-            print(f"Error: Export directory \'{export_dir}\' already exists but is not empty. ")
-            print("Please specify a new or empty directory for Job export")
-            return False
-
-    # Create export dir if it does not yet exist
-    else:
-        try:
-            os.makedirs(export_dir, exist_ok=True)
-            if not os.path.isdir(export_dir):
-                print("Error: directory creation failed.")
-                return False
-        except Exception as e:
-            print("Exception when trying to create directory \'{export_dir}\': {e}")
-            return False
-    return True
-
-#####################################
-# Main Program
-#####################################
-
 # Get CRED_ID from the environment
 CRED_ID = os.getenv('CRED_ID')
 
@@ -81,10 +48,10 @@ CRED_ID = os.getenv('CRED_ID')
 CRED_TOKEN = os.getenv('CRED_TOKEN')
 
 # Check the number of command line args
-if len(sys.argv) != 3:
+if len(sys.argv) != 2:
     print('Error: Wrong number of arguments')
-    print('Usage: $ python3 export-old-jobs.py <input_file> <export_dir>')
-    print('Usage Example: $ python3 export-old-jobs.py /Users/mark/old-jobs/old_jobs.json /Users/mark/jobs-export')
+    print('Usage: $ python3 delete-jobs.py <input_file>')
+    print('Usage Example: $ python3 delete-jobs.py /Users/mark/old-jobs/old_jobs.json')
     sys.exit(1)
 
 # Validate the input_file parameter
@@ -94,20 +61,13 @@ print(f"input_file: '{input_file}'")
 if not validate_input_file_parameter(input_file):
     sys.exit(1)
 
-# Validate the export_dir parameter
-export_dir = sys.argv[2]
-print("---------------------------------")
-print(f"export_dir: '{export_dir}'")
-if not validate_export_dir_parameter(export_dir):
-    sys.exit(1)
-
 # Connect to Control Hub
 print("---------------------------------")
 print('Connecting to Control Hub')
 sch = ControlHub(credential_id=CRED_ID, token=CRED_TOKEN)
 
 print("---------------------------------")
-print('Exporting Jobs...')
+print('Deleting Jobs...')
 print("---------------------------------")
 
 # Process each line of the input_file

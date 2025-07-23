@@ -31,7 +31,6 @@
 #    $ export CRED_ID="40af8..."
 #    $ export CRED_TOKEN="eyJ0..."
 #
-#
 #################################################################
 
 import os,sys,json
