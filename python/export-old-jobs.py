@@ -37,36 +37,36 @@ from streamsets.sdk import ControlHub
 
 # Method that validates the input_file command line parameter.
 # Returns True if the input_file exists and is readable or False otherwise
-def validate_input_file_parameter(input_file):
-    file_path = Path(input_file)
+def validate_input_file_parameter(the_input_file):
+    file_path = Path(the_input_file)
     if file_path.is_file() and os.access(file_path, os.R_OK):
         return True
     else:
-        print(f"Error: Input File \'{input_file}\' either does not exist or is not readable")
+        print(f"Error: Input File \'{the_input_file}\' either does not exist or is not readable")
         return False
 
 # Method that validates that the directory specified in the export_dir command line parameter either
 # does not exist or exists but is an empty dir. If the directory does not exist it will be created.
 # Returns True if the directory is OK or False if not.
-def validate_export_dir_parameter(export_dir):
+def validate_export_dir_parameter(the_export_dir):
 
     # If export_dir already exists...
-    if os.path.isdir(export_dir):
+    if os.path.isdir(the_export_dir):
         # ... make sure it is empty
-        if os.listdir(export_dir):
-            print(f"Error: Export directory \'{export_dir}\' already exists but is not empty. ")
+        if os.listdir(the_export_dir):
+            print(f"Error: Export directory \'{the_export_dir}\' already exists but is not empty. ")
             print("Please specify a new or empty directory for Job export")
             return False
 
     # Create export dir if it does not yet exist
     else:
         try:
-            os.makedirs(export_dir, exist_ok=True)
-            if not os.path.isdir(export_dir):
+            os.makedirs(the_export_dir, exist_ok=True)
+            if not os.path.isdir(the_export_dir):
                 print("Error: directory creation failed.")
                 return False
-        except Exception as e:
-            print("Exception when trying to create directory \'{export_dir}\': {e}")
+        except Exception as ex:
+            print(f"Exception when trying to create directory \'{the_export_dir}\': {ex}")
             return False
     return True
 
@@ -130,25 +130,30 @@ with open(input_file, 'r') as f:
                 else:
                     job = jobs[0]
 
-                    # replace '/' with '_' in Job name
-                    job_name = job.job_name.replace("/", "_")
-                    export_file_name = export_dir + '/' + job_name + '.zip'
+                    # Don't try to export Job Template Instances
+                    if job.template_job_id is None:
 
-                    print(f"Exporting Job \'{job.job_name}\' into the file \'{export_file_name}\'")
+                        # replace '/' with '_' in Job name
+                        job_name = job.job_name.replace("/", "_")
+                        export_file_name = export_dir + '/' + job_name + '.zip'
+
+                        print(f"Exporting Job \'{job.job_name}\' into the file \'{export_file_name}\'")
 
 
-                    data = sch.export_jobs([job])
+                        data = sch.export_jobs([job])
 
-                    # Export a zip file for the Job
-                    with open(export_file_name, 'wb') as file:
-                        file.write(data)
-
+                        # Export a zip file for the Job
+                        with open(export_file_name, 'wb') as file:
+                            file.write(data)
+                    else:
+                        print(f"Skipping export for Job \'{job.job_name}\' because it is a Job Template Instance")
+                        print(f"--> Job Template ID \'{job.template_job_id}\'")
             except Exception as e:
                 print(f"Error exporting Job \'{job.job_name}\': {e}")
 
         except json.JSONDecodeError as e:
             print(f"Error: Invalid JSON for line {line}: {e}")
 
-print('-------------------------------------')
+        print("---------------------------------")
 
 print('Done')

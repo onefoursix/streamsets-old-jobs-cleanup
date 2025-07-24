@@ -37,15 +37,15 @@ def convert_dt_string_to_millis(dt_string):
     dt = datetime.strptime(dt_string, "%Y-%m-%d")
     return int(dt.timestamp() * 1000)
 
-# Method to convert millis to datetime string
+# Method to convert millis to a datetime string
 def convert_millis_to_dt_string(millis):
     dt = datetime.fromtimestamp(millis / 1000)
     return dt.strftime("%Y-%m-%d %H:%M:%S")
 
 # Method that validates the input_file command line parameter.
 # Returns True if the input_file exists and is readable or False otherwise
-def validate_input_file_parameter(input_file):
-    file_path = Path(input_file)
+def validate_input_file_parameter(the_input_file):
+    file_path = Path(the_input_file)
     if file_path.is_file() and os.access(file_path, os.R_OK):
         return True
     else:
@@ -54,8 +54,8 @@ def validate_input_file_parameter(input_file):
 
 # Method to confirm the Job has not been run since it was flagged as old
 # Returns True if the last Job run is before the last_run_threshold
-def job_has_not_been_run_recently(job, job_info):
-    last_run_threshold = job_info['last_run_threshold']
+def job_has_not_been_run_recently(job, the_job_info):
+    last_run_threshold = the_job_info['last_run_threshold']
     last_run_threshold_millis = convert_dt_string_to_millis(last_run_threshold)
     try:
         history = job.history
@@ -68,8 +68,8 @@ def job_has_not_been_run_recently(job, job_info):
                 last_run_dt = convert_millis_to_dt_string(last_run_millis)
                 print(f"- Job was run at \'{last_run_dt}\' which is more recent than the last_run_threshold of \'{last_run_threshold}\'")
                 print(" --> Job will not be deleted.")
-    except Exception as e:
-        print(f"- Error confirming Job has not been run recently \'{job.job_name}\': \'{e}\'")
+    except Exception as ex:
+        print(f"- Error confirming Job has not been run recently \'{job.job_name}\': \'{ex}\'")
         print(" --> Job will not be deleted.")
     return False
 
@@ -84,16 +84,17 @@ def job_is_inactive(the_job):
                 return True
             else:
                 print(f"Error: Job \'{the_job.job_name}\' has status \'{status}\'; the Job should have status of \'INACTIVE\' to be deleted")
-    except Exception as e:
-        print(f"Error getting status for Job \'{the_job.job_name}\': \'{e}\'")
+    except Exception as ex:
+        print(f"Error getting status for Job \'{the_job.job_name}\': \'{ex}\'")
     return False
 
 # Method to get a Job from SCH using the job_id. Returns the Job or None if the
 # Job is not found or if there is any issue
 def get_job(the_job_info):
+    job_id = the_job_info["job_id"]
+    job_name = the_job_info["job_name"]
+
     try:
-        job_id = job_info["job_id"]
-        job_name = job_info["job_name"]
         query = 'id=="' + job_id + '"'
         jobs = sch.jobs.get_all(search=query)
         if jobs is None or len(jobs) == 0:
@@ -101,8 +102,8 @@ def get_job(the_job_info):
         else:
             job = jobs[0]
             return job
-    except Exception as e:
-        print(f"Error getting Job from Control Hub \'{job_name}\': {e}")
+    except Exception as ex:
+        print(f"Error getting Job from Control Hub \'{job_name}\': {ex}")
     return None
 
 # Method to delete a Job. The deletion attempt might fail due to permission issues
@@ -111,17 +112,16 @@ def delete_job(job):
     try:
         sch.delete_job(job)
         print(f"- Job was deleted.")
-    except Exception as e:
-        print(f"Error: Attempt to delete Job failed; {e}")
+    except Exception as ex:
+        print(f"Error: Attempt to delete Job failed; {ex}")
 
-
-# Method to handle the deletion of a Job
-def handle_job(job_info):
+# Method to handle each line the input file
+def handle_line(the_job_info):
 
     print(f"Preparing to delete Job \'{job_info['job_name']}\' with Job ID \'{job_info['job_id']}\'")
 
     # Get the Job
-    job = get_job(job_info)
+    job = get_job(the_job_info)
     if job is not None:
 
         print("- Found Job")
@@ -178,7 +178,7 @@ with open(input_file, 'r') as f:
 
         try:
             job_info = json.loads(line)
-            handle_job(job_info)
+            handle_line(job_info)
 
         except json.JSONDecodeError as e:
             print(f"Error: Invalid JSON for line {line}: {e}")

@@ -49,27 +49,28 @@ def millis_to_datetime_string(millis):
 # Method that validates that the last_run_threshold command line parameter is a valid date and is at
 # least one day behind the current date. Returns the last_run_threshold as millis or None if the parameter is not valid.
 def validate_last_run_threshold_parameter(last_run_threshold_str):
-    last_run_threshold = None
     try:
-        last_run_threshold = datetime.strptime(last_run_threshold_str, "%Y-%m-%d")
+        the_last_run_threshold = datetime.strptime(last_run_threshold_str, "%Y-%m-%d")
+        if not the_last_run_threshold.date() <= date.today() - timedelta(days=1):
+            print(
+                f"Error: The last_run_threshold parameter \'{last_run_threshold_str}\' is not at least one day earlier than the current date.")
+            return None
+        if the_last_run_threshold is None:
+            return None
+        else:
+            the_last_run_threshold_millis = int(the_last_run_threshold.timestamp() * 1000)
+            return the_last_run_threshold_millis
     except ValueError:
         print(f"Error: The last_run_threshold parameter \'{last_run_threshold_str}\' is not a valid date in yyyy-mm-dd format.")
         return None
-    if not last_run_threshold.date() <= date.today() - timedelta(days=1):
-        print(f"Error: The last_run_threshold parameter \'{last_run_threshold_str}\' is not at least one day earlier than the current date.")
-        return None
-    if last_run_threshold is None:
-        return None
-    else:
-        last_run_threshold_millis = int(last_run_threshold.timestamp() * 1000)
-        return last_run_threshold_millis
+
 
 # Method that validates the output file and creates the directories in the path if necessary.
 # Returns True if the output file and path are valid or False if not.
-def validate_output_file_parameter(output_file):
+def validate_output_file_parameter(the_output_file):
 
     # Get output file's path
-    path = Path(output_file)
+    path = Path(the_output_file)
 
     # Try to create parent folder if it does not already exist
     parent_dir = path.parent
@@ -136,8 +137,6 @@ for job in sch.jobs:
     # Ignore Job Templates
     if not job.job_template:
 
-
-
         # Get the Job History
         history = job.history
         if history is not None and len(history) > 0:
@@ -150,7 +149,7 @@ for job in sch.jobs:
                 # If the Job's last run is older than the threshold...
                 if last_run.finish_time < last_run_threshold_millis:
 
-                    print(f"Old Job: \'{job.job_name}\' last_run: {millis_to_datetime_string(last_run.finish_time)}")
+                    print(f"Job: \'{job.job_name}\' Last Run Date: {millis_to_datetime_string(last_run.finish_time)}")
 
                     # Add the job to the map
                     old_jobs[last_run.finish_time] = job
