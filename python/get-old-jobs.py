@@ -128,9 +128,9 @@ print('Connecting to Control Hub')
 print("---------------------------------")
 sch = ControlHub(credential_id=CRED_ID, token=CRED_TOKEN)
 
-print('Writing the list of old Job Instances to output file (this may take a while)...')
-
 # Loop through all Jobs
+print('Searching for old Jobs (this may take a while)...')
+print("---------------------------------")
 for job in sch.jobs:
 
     # Ignore Job Templates
@@ -148,16 +148,20 @@ for job in sch.jobs:
                 # If the Job's last run is older than the threshold...
                 if last_run.finish_time < last_run_threshold_millis:
 
+
+                    print(f"Old Job: \'{job.job_name}\' last_run: {millis_to_datetime_string(last_run.finish_time)}")
+
                     # Add the job to the map
                     old_jobs[last_run.finish_time] = job
 
 # Write the old Jobs to the output file in ascending datetime order (i.e. oldest first)
 # This will overwrite a pre-existing file of the same name
+print('Writing the list of old Job Instances to output file in sorted date order (oldest first)')
 with open(output_file, 'w') as output_file:
     for last_run_millis in sorted(old_jobs.keys()):
         job = old_jobs[last_run_millis]
         last_run_finish_time = millis_to_datetime_string(last_run_millis)
-        line = json.dumps({"Last Run": last_run_finish_time, "Job Name": job.job_name, "Job ID": job.job_id, "last_run_threshold": last_run_threshold}) + '\n'
+        line = json.dumps({"last_run": last_run_finish_time, "job_name": job.job_name, "job_id": job.job_id, "last_run_threshold": last_run_threshold}) + '\n'
         output_file.write(line)
 print("---------------------------------")
 print('Done')

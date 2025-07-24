@@ -115,7 +115,7 @@ with open(input_file, 'r') as f:
     for line in f:
         try:
             obj = json.loads(line)
-            job_id = obj["Job ID"]
+            job_id = obj["job_id"]
 
             try:
                 # Get the Job from Control Hub using its ID

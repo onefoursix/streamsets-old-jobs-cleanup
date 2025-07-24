@@ -62,12 +62,11 @@ Example Run:
 Here is an example of the data written to the output file <code>old_jobs.json</code>. Note that the Jobs are sorted with the oldest last run time first:
 
 ```
-{"Last Run": "2023-01-12 19:07:00", "Job Name": "Weather to MongoDB", "Job ID": {"Last Run": "2023-01-12 19:07:00", "Job Name": "Weather to MongoDB", "Job ID": "338b33a1-1ad6-47a0-9b66-6b685921d3fc:8030c2e9-1a39-11ec-a5fe-97c8d4369386", "last_run_threshold": "2024-06-30"}
-{"Last Run": "2023-07-25 14:37:48", "Job Name": "Weather Raw to Refined (1)", "Job ID": "2369189b-3961-4219-a210-05689b780702:8030c2e9-1a39-11ec-a5fe-97c8d4369386", "last_run_threshold": "2024-06-30"}
-{"Last Run": "2024-04-30 21:04:42", "Job Name": "Weather Aggregation", "Job ID": "ca42fe53-5d62-42ef-a546-be8d73de24f6:8030c2e9-1a39-11ec-a5fe-97c8d4369386", "last_run_threshold": "2024-06-30"}
-{"Last Run": "2024-05-26 10:42:05", "Job Name": "Oracle to Snowflake Bulk Load", "Job ID": "fe9605ab-4912-4181-a315-e49d031a0d50:8030c2e9-1a39-11ec-a5fe-97c8d4369386", "last_run_threshold": "2024-06-30"}
-{"Last Run": "2024-05-29 10:08:11", "Job Name": "Oracle CDC to Snowflake", "Job ID": "00d5d750-527e-4ac3-9417-4b0dcbfcab35:8030c2e9-1a39-11ec-a5fe-97c8d4369386", "last_run_threshold": "2024-06-30"}
-
+{"last_run": "2023-01-12 19:07:00", "job_name": "Weather to MongoDB", "job_id": "338b33a1-1ad6-47a0-9b66-6b685921d3fc:8030c2e9-1a39-11ec-a5fe-97c8d4369386", "last_run_threshold": "2024-06-30"}
+{"last_run": "2023-07-25 14:37:48", "job_name": "Weather Raw to Refined (1)", "job_id": "2369189b-3961-4219-a210-05689b780702:8030c2e9-1a39-11ec-a5fe-97c8d4369386", "last_run_threshold": "2024-06-30"}
+{"last_run": "2024-04-30 21:04:42", "job_name": "Weather Aggregation", "job_id": "ca42fe53-5d62-42ef-a546-be8d73de24f6:8030c2e9-1a39-11ec-a5fe-97c8d4369386", "last_run_threshold": "2024-06-30"}
+{"last_run": "2024-05-26 10:42:05", "job_name": "Oracle to Snowflake Bulk Load", "job_id": "fe9605ab-4912-4181-a315-e49d031a0d50:8030c2e9-1a39-11ec-a5fe-97c8d4369386", "last_run_threshold": "2024-06-30"}
+{"last_run": "2024-05-29 10:08:11", "job_name": "Oracle CDC to Snowflake", "job_id": "00d5d750-527e-4ac3-9417-4b0dcbfcab35:8030c2e9-1a39-11ec-a5fe-97c8d4369386", "last_run_threshold": "2024-06-30"}
 ```
 
 ## Script #2 - export-old-jobs.py
@@ -82,7 +81,11 @@ Args:
 
 Usage:          <code>$ python3 export-old-jobs.py <input_file> <export_dir></code> 
 
-Usage Example:  <code>$ python3 export-old-jobs.py /Users/mark/old-jobs/old_jobs.json /Users/mark/jobs-export</code> 
+Usage Example:  <code>$ python3 export-old-jobs.py /Users/mark/old-jobs/old_jobs.json</code>
+
+This script does not write a log, so if you want to capture the results of this script in a file, redirect  its output like this:
+
+<code>$ python3 export-old-jobs.py /Users/mark/old-jobs/old_jobs.json /Users/mark/jobs-export > /Users/mark/job-exports.log</code> 
 
 Example Run:
 ```

@@ -29,7 +29,18 @@
 
 import os,sys, json
 from pathlib import Path
+from datetime import datetime
 from streamsets.sdk import ControlHub
+
+# Method to convert a datetime string of the form 'yyy-dd-mm' to millis
+def convert_dt_string_to_millis(dt_string):
+    dt = datetime.strptime(dt_string, "%Y-%m-%d")
+    return int(dt.timestamp() * 1000)
+
+# Method to convert millis to datetime string
+def convert_millis_to_dt_string(millis):
+    dt = datetime.fromtimestamp(millis / 1000)
+    return dt.strftime("%Y-%m-%d %H:%M:%S")
 
 # Method that validates the input_file command line parameter.
 # Returns True if the input_file exists and is readable or False otherwise
@@ -40,6 +51,100 @@ def validate_input_file_parameter(input_file):
     else:
         print(f"Error: Input File \'{input_file}\' either does not exist or is not readable")
         return False
+
+# Method to confirm the Job has not been run since it was flagged as old
+# Returns True if the last Job run is before the last_run_threshold
+def job_has_not_been_run_recently(job, job_info):
+    last_run_threshold = job_info['last_run_threshold']
+    last_run_threshold_millis = convert_dt_string_to_millis(last_run_threshold)
+    try:
+        history = job.history
+        if history is not None and len(history) > 0:
+            last_run = history[0]
+            last_run_millis = last_run.finish_time
+            if last_run_millis < last_run_threshold_millis:
+                return True
+            else:
+                last_run_dt = convert_millis_to_dt_string(last_run_millis)
+                print(f"- Job was run at \'{last_run_dt}\' which is more recent than the last_run_threshold of \'{last_run_threshold}\'")
+                print(" --> Job will not be deleted.")
+    except Exception as e:
+        print(f"- Error confirming Job has not been run recently \'{job.job_name}\': \'{e}\'")
+        print(" --> Job will not be deleted.")
+    return False
+
+# Method to confirm the Job has INACTIVE status. Return True or False
+def job_is_inactive(the_job):
+    try:
+        history = the_job.history
+        if history is not None and len(history) > 0:
+            last_run = history[0]
+            status = last_run.status
+            if status == 'INACTIVE':
+                return True
+            else:
+                print(f"Error: Job \'{the_job.job_name}\' has status \'{status}\'; the Job should have status of \'INACTIVE\' to be deleted")
+    except Exception as e:
+        print(f"Error getting status for Job \'{the_job.job_name}\': \'{e}\'")
+    return False
+
+# Method to get a Job from SCH using the job_id. Returns the Job or None if the
+# Job is not found or if there is any issue
+def get_job(the_job_info):
+    try:
+        job_id = job_info["job_id"]
+        job_name = job_info["job_name"]
+        query = 'id=="' + job_id + '"'
+        jobs = sch.jobs.get_all(search=query)
+        if jobs is None or len(jobs) == 0:
+            print(f"Error getting Job from Control Hub \'{job_name}\': Job not found")
+        else:
+            job = jobs[0]
+            return job
+    except Exception as e:
+        print(f"Error getting Job from Control Hub \'{job_name}\': {e}")
+    return None
+
+# Method to delete a Job. The deletion attempt might fail due to permission issues
+# or if the Job is referenced by a Topology, a Task, or a Schedule
+def delete_job(job):
+    try:
+        sch.delete_job(job)
+        print(f"- Job was deleted.")
+    except Exception as e:
+        print(f"Error: Attempt to delete Job failed; {e}")
+
+
+# Method to handle the deletion of a Job
+def handle_job(job_info):
+
+    print(f"Preparing to delete Job \'{job_info['job_name']}\''")
+
+    # Get the Job
+    job = get_job(job_info)
+    if job is not None:
+
+        print("- Found Job")
+
+        # Make sure the Job is INACTIVE
+        if job_is_inactive(job):
+            print("- Job has status \'INACTIVE\'")
+
+            # Make sure the Job hasn't been run since it was identified as old
+            if job_has_not_been_run_recently(job, job_info):
+                # Try to delete the Job
+                delete_job(job)
+
+
+
+
+    print("---------------------------------")
+
+
+
+#####################################
+# Main Program
+#####################################
 
 # Get CRED_ID from the environment
 CRED_ID = os.getenv('CRED_ID')
@@ -66,49 +171,15 @@ print("---------------------------------")
 print('Connecting to Control Hub')
 sch = ControlHub(credential_id=CRED_ID, token=CRED_TOKEN)
 
-print("---------------------------------")
-print('Deleting Jobs...')
-print("---------------------------------")
-
 # Process each line of the input_file
 with open(input_file, 'r') as f:
     for line in f:
+
         try:
-            obj = json.loads(line)
-            job_id = obj["Job ID"]
-
-            try:
-                # Get the Job from Control Hub using its ID
-                query = 'id=="' + job_id + '"'
-                jobs = sch.jobs.get_all(search=query)
-
-                # Handle if Job is not found
-                if jobs is None or len(jobs) == 0:
-                    print(f"Error exporting Job \'{obj["Job Name"]}\' with job ID \'{job_id}\': Job not found")
-
-               # Export Job
-                else:
-                    job = jobs[0]
-
-                    # replace '/' with '_' in Job name
-                    job_name = job.job_name.replace("/", "_")
-                    export_file_name = export_dir + '/' + job_name + '.zip'
-
-                    print(f"Exporting Job \'{job.job_name}\' into the file \'{export_file_name}\'")
-
-
-                    data = sch.export_jobs([job])
-
-                    # Export a zip file for the Job
-                    with open(export_file_name, 'wb') as file:
-                        file.write(data)
-
-            except Exception as e:
-                print(f"Error exporting Job \'{job.job_name}\': {e}")
+            job_info = json.loads(line)
+            handle_job(job_info)
 
         except json.JSONDecodeError as e:
             print(f"Error: Invalid JSON for line {line}: {e}")
-
-print('-------------------------------------')
 
 print('Done')
