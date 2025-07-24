@@ -2,7 +2,10 @@
 #################################################################
 # FILE:  delete-old-jobs.py
 #
-# DESCRIPTION:    This script deletes all Jobs instances listed in the input file.
+# DESCRIPTION:    This script attempts to delete Jobs instances listed in the input file.
+#                 Job Instances and Job Template Instances will be deleted, unless there
+#                 are permission issues, or in cases where Job instances are referenced by
+#                 Sequences or Topologies.
 #
 # ARGS:           - input_file - A JSON list of Job instances to delete.
 #
@@ -54,9 +57,8 @@ def validate_input_file_parameter(the_input_file):
 
 # Method to confirm the Job has not been run since it was flagged as old
 # Returns True if the last Job run is before the last_run_threshold
-def job_has_not_been_run_recently(job, the_job_info):
-    last_run_threshold = the_job_info['last_run_threshold']
-    last_run_threshold_millis = convert_dt_string_to_millis(last_run_threshold)
+def job_has_not_been_run_recently(job, the_last_run_threshold):
+    last_run_threshold_millis = convert_dt_string_to_millis(the_last_run_threshold)
     try:
         history = job.history
         if history is not None and len(history) > 0:
@@ -66,7 +68,7 @@ def job_has_not_been_run_recently(job, the_job_info):
                 return True
             else:
                 last_run_dt = convert_millis_to_dt_string(last_run_millis)
-                print(f"- Job was run at \'{last_run_dt}\' which is more recent than the last_run_threshold of \'{last_run_threshold}\'")
+                print(f"- Job was run at \'{last_run_dt}\' which is more recent than the last_run_threshold of \'{the_last_run_threshold}\'")
                 print(" --> Job will not be deleted.")
     except Exception as ex:
         print(f"- Error confirming Job has not been run recently \'{job.job_name}\': \'{ex}\'")
@@ -131,7 +133,7 @@ def handle_line(the_job_info):
             print("- Job has status \'INACTIVE\'")
 
             # Make sure the Job hasn't been run since it was identified as old
-            if job_has_not_been_run_recently(job, job_info):
+            if job_has_not_been_run_recently(job, job_info['last_run_threshold']):
 
                 # Try to delete the Job
                 delete_job(job)

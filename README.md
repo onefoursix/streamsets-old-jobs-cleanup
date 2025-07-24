@@ -161,5 +161,63 @@ A good test to perform at this point is to manually delete one of those Job inst
 <img src="images/import2.png" alt="import2.png" width="700"/>
 
 
+## Script #3 - delete-old-jobs.py
+
+Description:   This script attempts to delete Jobs instances listed in the input file.  Job Instances and Job Template Instances will be deleted, unless there are permission issues, or in cases where Job instances are referenced by Sequences or Topologies. 
+
+Args:
+- <code>input_file</code> - A JSON list of Job instances to delete.
+
+Usage:          <code>$ python3 delete-old-jobs.py <input_file></code>
+
+Usage Example:  <code>$ python3 delete-old-jobs.py /Users/mark/old-jobs/old_jobs.json</code>
+
+This script does not write a log, so if you want to capture the results of this script in a file, redirect its output like this:
+
+$ python3 delete-old-jobs.py /Users/mark/old-jobs/old_jobs.json > /Users/mark/deleted-jobs.log
+
+A good test to perform at this point is to manually edit an old_jobs.json input file so there are only a couple of Jobs listed, and to run the script and confirm that those Jobs were correctly deleted.
+
+
+
+Example Run:
+```
+	$ python3 python/delete-old-jobs.py /Users/mark/old-jobs/old_jobs.json 
+	---------------------------------
+	input_file: '/Users/mark/old-jobs/old_jobs.json'
+	---------------------------------
+	Connecting to Control Hub
+	Preparing to delete Job 'Weather to MongoDB' with Job ID '338b33a1-1ad6-47a0-9b66-6b685921d3fc:8030c2e9-1a39-11ec-a5fe-97c8d4369386'
+	- Found Job
+	- Job has status 'INACTIVE'
+	Error: Attempt to delete Job failed; JOBRUNNER_251: Cannot delete job 'Weather to MongoDB' as it is part of sequences: '1'
+	---------------------------------
+	Preparing to delete Job 'Check API Schema - http://localhost:9001/get/employee' with Job ID '6641429e-dea4-416e-a93a-d4bdc5f98eaf:8030c2e9-1a39-11ec-a5fe-97c8d4369386'
+	- Found Job
+	- Job has status 'INACTIVE'
+	- Job was deleted.
+	---------------------------------
+	Preparing to delete Job 'Check API Schema - http://localhost:9002/movies' with Job ID '3687eba0-9a76-457c-ad5a-56424cac8181:8030c2e9-1a39-11ec-a5fe-97c8d4369386'
+	- Found Job
+	- Job has status 'INACTIVE'
+	- Job was deleted.
+	---------------------------------
+	Preparing to delete Job 'Check API Schema - http://localhost:9001/get/employee' with Job ID '4082cfa9-f622-4f83-a1a1-9bacfe10a2a6:8030c2e9-1a39-11ec-a5fe-97c8d4369386'
+	- Found Job
+	- Job has status 'INACTIVE'
+	- Job was deleted.
+	---------------------------------
+	Preparing to delete Job 'Check Database Table Schema - employee' with Job ID '6b3a84fd-b72f-4ab4-a2a3-10850dd3f88e:8030c2e9-1a39-11ec-a5fe-97c8d4369386'
+	- Found Job
+	- Job has status 'INACTIVE'
+	- Job was deleted.
+	---------------------------------
+	Preparing to delete Job 'Check Database Table Schema - employee' with Job ID 'bf8aa913-eca9-45f6-8cea-9ce7bff82326:8030c2e9-1a39-11ec-a5fe-97c8d4369386'
+	- Found Job
+	- Job has status 'INACTIVE'
+	- Job was deleted.
+	---------------------------------
+	Done
+```
 
 
