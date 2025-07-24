@@ -118,7 +118,7 @@ def delete_job(job):
 # Method to handle the deletion of a Job
 def handle_job(job_info):
 
-    print(f"Preparing to delete Job \'{job_info['job_name']}\''")
+    print(f"Preparing to delete Job \'{job_info['job_name']}\' with Job ID \'{job_info['job_id']}\'")
 
     # Get the Job
     job = get_job(job_info)
@@ -132,6 +132,7 @@ def handle_job(job_info):
 
             # Make sure the Job hasn't been run since it was identified as old
             if job_has_not_been_run_recently(job, job_info):
+
                 # Try to delete the Job
                 delete_job(job)
 

@@ -136,6 +136,8 @@ for job in sch.jobs:
     # Ignore Job Templates
     if not job.job_template:
 
+
+
         # Get the Job History
         history = job.history
         if history is not None and len(history) > 0:
@@ -148,7 +150,6 @@ for job in sch.jobs:
                 # If the Job's last run is older than the threshold...
                 if last_run.finish_time < last_run_threshold_millis:
 
-
                     print(f"Old Job: \'{job.job_name}\' last_run: {millis_to_datetime_string(last_run.finish_time)}")
 
                     # Add the job to the map
@@ -156,6 +157,7 @@ for job in sch.jobs:
 
 # Write the old Jobs to the output file in ascending datetime order (i.e. oldest first)
 # This will overwrite a pre-existing file of the same name
+print("---------------------------------")
 print('Writing the list of old Job Instances to output file in sorted date order (oldest first)')
 with open(output_file, 'w') as output_file:
     for last_run_millis in sorted(old_jobs.keys()):
