@@ -35,7 +35,7 @@ See the details for running each script below.
 
 ## Script #1 - get-old-jobs.py
 
-Description:   This script writes a list of INACTIVE Job instances that have not been run within a user-defined lookback period, for example, a week or a month. The list of old Job instances is written in to a JSON file on the local file system. Job instances that have not yet been run are ignored as they may have just been created.
+Description:   This script writes a list of INACTIVE Job instances that have not been run within a user-defined lookback period, for example, a week or a month. The list of old Job instances is written to a JSON file on the local file system. Job instances that have not yet been run are ignored as they may have just been created.
 
 Args:
 
@@ -90,6 +90,7 @@ Here is an example of the data written to the output file <code>old_jobs.json</c
 ## Script #2 - export-old-jobs.py
 
 Description:   This script exports the Jobs instances listed in the input file. Note that Job Template Instances can't be exported, so they will be skipped.
+
 Args:
 
 - <code>input_file</code> - A JSON list of Job instances to export (i.e. the output file written by script #1)
