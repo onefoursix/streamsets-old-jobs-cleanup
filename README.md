@@ -166,7 +166,7 @@ This script does not write a log, so if you want to capture the results of this 
 
 <code>$ python3 delete-old-jobs.py /Users/mark/old-jobs/old_jobs.json > /Users/mark/deleted-jobs.log</code>
 
-A good test to perform at this point is to manually edit an <code>old_jobs.json</code> input file so there are only a couple of Jobs listed, and to run the script and confirm that those Jobs were correctly deleted.
+A good test to perform at this point is to manually edit an <code>old_jobs.json</code> input file so there are only a couple of Jobs listed, run the script, and confir those Jobs are correctly deleted.
 
 
 Example Run:

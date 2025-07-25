@@ -6,7 +6,8 @@
 #                 user-defined lookback period, for example, a week or a month. The list of old Job instances
 #                 is written in JSON format to the local file system
 #
-# ARGS:           - last_run_threshold - The threshold date to mark Jobs as needing to be cleaned up
+# ARGS:           - last_run_threshold - The threshold date to mark Jobs as needing to be cleaned up if the Job's
+#                   last run was before that date.
 #
 #                 - output_file - The full path to a file where the list of old jobs will be written to.
 #                                 Directories in the path will be created as needed and if an existing file
