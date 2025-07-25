@@ -124,7 +124,6 @@ last_run_threshold = sys.argv[1]
 last_run_threshold_millis = None
 if last_run_threshold_parameter_is_a_date(last_run_threshold) and last_run_threshold_parameter_is_at_least_one_day_old(last_run_threshold):
     last_run_threshold_millis = convert_datetime_string_to_millis(last_run_threshold)
-
 if last_run_threshold_millis is None:
     sys.exit(1)
 
