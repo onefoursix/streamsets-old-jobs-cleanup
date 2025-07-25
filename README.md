@@ -127,14 +127,12 @@ Example Run:
 ```
 
 If you have Job Template Instances in the list of old Jobs, you will see messages like this when you run the script:
-
 ```
 	---------------------------------
 	Skipping export for Job 'Check Database Table Schema - employee' because it is a Job Template Instance
 	--> Job Template ID '97ec0a88-4e19-4855-aece-3a9b13f390d7:8030c2e9-1a39-11ec-a5fe-97c8d4369386'
 	---------------------------------
 ```
-
 Here is a directory listing of the exported Jobs:
 
 ```
@@ -155,7 +153,7 @@ A good test to perform at this point is to manually delete one of those Job inst
 
 ## Script #3 - delete-old-jobs.py
 
-Description:   This script attempts to delete Jobs instances listed in the input file.  Job Instances and Job Template Instances will be deleted, unless there are permission issues, or in cases where Job instances are referenced by Sequences or Topologies. 
+Description:   This script attempts to delete Jobs instances listed in the input file.  Job Instances and Job Template Instances will be deleted, unless there are permission issues, or in cases where Job instances are referenced by Sequences or Topologies. The script makes sure each Job in the input file has <code>INACTIVE</code> status and has not been run since after the <code>last_run_threshold</code>.
 
 Args:
 - <code>input_file</code> - A JSON list of Job instances to delete.
@@ -166,9 +164,9 @@ Usage Example:  <code>$ python3 delete-old-jobs.py /Users/mark/old-jobs/old_jobs
 
 This script does not write a log, so if you want to capture the results of this script in a file, redirect its output like this:
 
-$ python3 delete-old-jobs.py /Users/mark/old-jobs/old_jobs.json > /Users/mark/deleted-jobs.log
+<code>$ python3 delete-old-jobs.py /Users/mark/old-jobs/old_jobs.json > /Users/mark/deleted-jobs.log</code>
 
-A good test to perform at this point is to manually edit an old_jobs.json input file so there are only a couple of Jobs listed, and to run the script and confirm that those Jobs were correctly deleted.
+A good test to perform at this point is to manually edit an <code>old_jobs.json</code> input file so there are only a couple of Jobs listed, and to run the script and confirm that those Jobs were correctly deleted.
 
 
 Example Run:
