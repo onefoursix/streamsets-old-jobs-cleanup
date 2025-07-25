@@ -179,19 +179,19 @@ Example Run:
 	Connecting to Control Hub
 	---------------------------------
 	Preparing to delete Job 'Weather to Elasticsearch' with Job ID '345b33a1-1ad6-47a0-9b66-10185921d3fc:8030c2e9-1a39-11ec-a5fe-97c8d4369386'
-    - Found Job
-    Error: Job 'Weather to Elasticsearch' has status 'INACTIVE_ERROR'; the Job should have status of 'INACTIVE' to be deleted
-    ---------------------------------
+	- Found Job
+	Error: Job 'Weather to Elasticsearch' has status 'INACTIVE_ERROR'; the Job should have status of 'INACTIVE' to be deleted
+	---------------------------------
 	Preparing to delete Job 'Weather to MongoDB' with Job ID '338b33a1-1ad6-47a0-9b66-6b685921d3fc:8030c2e9-1a39-11ec-a5fe-97c8d4369386'
 	- Found Job
 	- Job has status 'INACTIVE'
 	Error: Attempt to delete Job failed; JOBRUNNER_251: Cannot delete job 'Weather to MongoDB' as it is part of sequences: '1'
 	---------------------------------
 	Preparing to delete Job 'Weather to Astra' with Job ID '118b33a1-1ad6-47a0-9b66-6b685921d3fc:8030c2e9-1a39-11ec-a5fe-97c8d4369386'
-    - Found Job
-    - Job has status 'INACTIVE'
-    - Job was run at '2025-07-24 18:30:11' which is more recent than the last_run_threshold of '2025-06-30'
-    --> Job will not be deleted.
+	- Found Job
+	- Job has status 'INACTIVE'
+	- Job was run at '2025-07-24 18:30:11' which is more recent than the last_run_threshold of '2025-06-30'
+	--> Job will not be deleted.
  	---------------------------------
 	Preparing to delete Job 'Check API Schema - http://localhost:9001/get/employee' with Job ID '6641429e-dea4-416e-a93a-d4bdc5f98eaf:8030c2e9-1a39-11ec-a5fe-97c8d4369386'
 	- Found Job
