@@ -131,8 +131,13 @@ with open(input_file, 'r') as f:
                 else:
                     job = jobs[0]
 
-                    # Don't try to export Job Template Instances
-                    if job.template_job_id is None:
+                    # Skip this one if it is a Job Template Instance, wich can't be exported
+                    if job.template_job_id is not None:
+                        print(f"Skipping export for Job \'{job.job_name}\' because it is a Job Template Instance")
+                        print(f"--> Job Template ID \'{job.template_job_id}\'")
+
+                    # Not a Job Template Instance
+                    else:
 
                         # replace '/' with '_' in Job name
                         job_name = job.job_name.replace("/", "_")
@@ -140,15 +145,12 @@ with open(input_file, 'r') as f:
 
                         print(f"Exporting Job \'{job.job_name}\' into the file \'{export_file_name}\'")
 
-
                         data = sch.export_jobs([job])
 
-                        # Export a zip file for the Job
+                        # Write a zip file for the Job
                         with open(export_file_name, 'wb') as file:
                             file.write(data)
-                    else:
-                        print(f"Skipping export for Job \'{job.job_name}\' because it is a Job Template Instance")
-                        print(f"--> Job Template ID \'{job.template_job_id}\'")
+
             except Exception as e:
                 print(f"Error exporting Job \'{job.job_name}\': {e}")
 
