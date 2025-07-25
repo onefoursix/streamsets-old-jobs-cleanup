@@ -131,7 +131,7 @@ with open(input_file, 'r') as f:
                 else:
                     job = jobs[0]
 
-                    # Skip this one if it is a Job Template Instance, wich can't be exported
+                    # Skip this one if it is a Job Template Instance, which can't be exported
                     if job.template_job_id is not None:
                         print(f"Skipping export for Job \'{job.job_name}\' because it is a Job Template Instance")
                         print(f"--> Job Template ID \'{job.template_job_id}\'")
