@@ -185,6 +185,7 @@ Example Run:
 	Preparing to delete Job 'Weather to MongoDB' with Job ID '338b33a1-1ad6-47a0-9b66-6b685921d3fc:8030c2e9-1a39-11ec-a5fe-97c8d4369386'
 	- Found Job
 	- Job has status 'INACTIVE'
+	- Last Job run was before threshold date.
 	Error: Attempt to delete Job failed; JOBRUNNER_251: Cannot delete job 'Weather to MongoDB' as it is part of sequences: '1'
 	---------------------------------
 	Preparing to delete Job 'Weather to Astra' with Job ID '118b33a1-1ad6-47a0-9b66-6b685921d3fc:8030c2e9-1a39-11ec-a5fe-97c8d4369386'
@@ -196,26 +197,31 @@ Example Run:
 	Preparing to delete Job 'Check API Schema - http://localhost:9001/get/employee' with Job ID '6641429e-dea4-416e-a93a-d4bdc5f98eaf:8030c2e9-1a39-11ec-a5fe-97c8d4369386'
 	- Found Job
 	- Job has status 'INACTIVE'
+	- Last Job run was before threshold date.
 	- Job was deleted.
 	---------------------------------
 	Preparing to delete Job 'Check API Schema - http://localhost:9002/movies' with Job ID '3687eba0-9a76-457c-ad5a-56424cac8181:8030c2e9-1a39-11ec-a5fe-97c8d4369386'
 	- Found Job
 	- Job has status 'INACTIVE'
+	- Last Job run was before threshold date.
 	- Job was deleted.
 	---------------------------------
 	Preparing to delete Job 'Check API Schema - http://localhost:9001/get/employee' with Job ID '4082cfa9-f622-4f83-a1a1-9bacfe10a2a6:8030c2e9-1a39-11ec-a5fe-97c8d4369386'
 	- Found Job
 	- Job has status 'INACTIVE'
+	- Last Job run was before threshold date.
 	- Job was deleted.
 	---------------------------------
 	Preparing to delete Job 'Check Database Table Schema - employee' with Job ID '6b3a84fd-b72f-4ab4-a2a3-10850dd3f88e:8030c2e9-1a39-11ec-a5fe-97c8d4369386'
 	- Found Job
 	- Job has status 'INACTIVE'
+	- Last Job run was before threshold date.
 	- Job was deleted.
 	---------------------------------
 	Preparing to delete Job 'Check Database Table Schema - employee' with Job ID 'bf8aa913-eca9-45f6-8cea-9ce7bff82326:8030c2e9-1a39-11ec-a5fe-97c8d4369386'
 	- Found Job
 	- Job has status 'INACTIVE'
+	- Last Job run was before threshold date.
 	- Job was deleted.
 	---------------------------------
 	Done

@@ -65,6 +65,7 @@ def job_has_not_been_run_recently(job, the_last_run_threshold):
             last_run = history[0]
             last_run_millis = last_run.finish_time
             if last_run_millis < last_run_threshold_millis:
+                print("- Last Job run was before threshold date.")
                 return True
             else:
                 last_run_dt = convert_millis_to_dt_string(last_run_millis)
