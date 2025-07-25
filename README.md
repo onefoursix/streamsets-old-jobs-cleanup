@@ -89,7 +89,7 @@ Here is an example of the data written to the output file <code>old_jobs.json</c
 
 ## Script #2 - export-old-jobs.py
 
-Description:   This script exports the Jobs instances listed in the input file. Note that Job Template Instances can't be exported, so they will be skipped.
+Description:   This script exports the Jobs instances listed in the input file. The exports serve as backups in case any Job instances deleted by script #3 need to be restored. Note that Job Template Instances can't be exported, but deleting Job Template Instances (as performed by script #3) does not delete the associated Job Templates.
 
 Args:
 
