@@ -137,13 +137,8 @@ def handle_line(the_job_info):
 
                 # Try to delete the Job
                 delete_job(job)
-
-
-
-
+                
     print("---------------------------------")
-
-
 
 #####################################
 # Main Program
@@ -177,11 +172,9 @@ sch = ControlHub(credential_id=CRED_ID, token=CRED_TOKEN)
 # Process each line of the input_file
 with open(input_file, 'r') as f:
     for line in f:
-
         try:
             job_info = json.loads(line)
             handle_line(job_info)
-
         except json.JSONDecodeError as e:
             print(f"Error: Invalid JSON for line {line}: {e}")
 
