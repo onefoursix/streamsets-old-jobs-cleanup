@@ -1,6 +1,6 @@
 # streamsets-old-jobs-cleanup
 
-This project provides three utility scripts that use the [IBM StreamSets SDK for Python](https://support-streamsets-com.s3.us-west-2.amazonaws.com/streamsets-docs/platform-sdk/latest/index.html) to clean up old Job Instances and Job Template Instances from [IBM StreamSets](https://www.ibm.com/products/streamsets).  This clean up is often needed, particularly if one has large numbers of Job Template Instances created with the setting <code>Delete from Job Instances List when Completed</code> disabled.
+This project provides three utility scripts that use the [IBM StreamSets SDK for Python](https://support-streamsets-com.s3.us-west-2.amazonaws.com/streamsets-docs/platform-sdk/latest/index.html) to clean up old Job Instances and Job Template Instances from [IBM StreamSets](https://www.ibm.com/products/streamsets).  This clean up is often needed, particularly if one has large numbers of Job Template Instances created with the setting "Delete from Job Instances List when Completed" disabled.
 
 The scripts perform the following actions and are intended to be run in the following order to minimize risk when deleting Jobs:
 
