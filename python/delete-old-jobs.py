@@ -137,7 +137,7 @@ def handle_line(the_job_info):
 
                 # Try to delete the Job
                 delete_job(job)
-                
+
     print("---------------------------------")
 
 #####################################
@@ -167,6 +167,7 @@ if not validate_input_file_parameter(input_file):
 # Connect to Control Hub
 print("---------------------------------")
 print('Connecting to Control Hub')
+print("---------------------------------")
 sch = ControlHub(credential_id=CRED_ID, token=CRED_TOKEN)
 
 # Process each line of the input_file
