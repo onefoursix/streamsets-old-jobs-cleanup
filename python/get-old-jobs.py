@@ -39,7 +39,6 @@ from pathlib import Path
 from datetime import date, datetime, timedelta
 from streamsets.sdk import ControlHub
 
-
 # Method to convert millis to datetime string
 def millis_to_datetime_string(millis):
     seconds = millis / 1000.0
@@ -76,8 +75,6 @@ def convert_datetime_string_to_millis(datetime_string):
     except Exception as e:
         print(f"Error: Error converting \'{datetime_string}\' to millis: \'{e}\'.")
     return None
-
-
 
 # Method that validates the output file and creates the directories in the path if necessary.
 # Returns True if the output file and path are valid or False if not.
