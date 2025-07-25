@@ -1,6 +1,6 @@
 # streamsets-old-jobs-cleanup
 
-This project provides three utility scripts that use the [IBM StreamSets SDK for Python](https://support-streamsets-com.s3.us-west-2.amazonaws.com/streamsets-docs/platform-sdk/latest/index.html) to clean up old Job Instances and Job Template Instances from [IBM StreamSets](https://www.ibm.com/products/streamsets).  This clean up is often needed, particularly if one has a large number of Job Template Instances created with the setting <code>Delete from Job Instances List when Completed:</code> disabled.
+This project provides three utility scripts that use the [IBM StreamSets SDK for Python](https://support-streamsets-com.s3.us-west-2.amazonaws.com/streamsets-docs/platform-sdk/latest/index.html) to clean up old Job Instances and Job Template Instances from [IBM StreamSets](https://www.ibm.com/products/streamsets).  This clean up is often needed, particularly if one has large numbers of Job Template Instances created with the setting <code>Delete from Job Instances List when Completed</code> disabled.
 
 The scripts perform the following actions and are intended to be run in the following order to minimize risk when deleting Jobs:
 
@@ -24,10 +24,10 @@ See the details for running each script below.
 
 - StreamSets Platform SDK for Python v6.6+. Docs are [here](https://docs.streamsets.com/platform-sdk/latest/welcome/installation.html)
 
- - StreamSets Platform API Credentials for a user with Organization Administrator role
+ - StreamSets Platform API Credentials for a user with at least read/write permissions for the Jobs to be deleted.
 
  - Before running any of the scripts, export the environment variables <code>CRED_ID</code> and <code>CRED_TOKEN</code>
-  with the StreamSets Platform API Credentials, like this:
+  with StreamSets Platform API Credentials, like this:
 ```
     	$ export CRED_ID="40af8..."
     	$ export CRED_TOKEN="eyJ0..."
@@ -35,7 +35,7 @@ See the details for running each script below.
 
 ## Script #1 - get-old-jobs.py
 
-Description:   This script writes a list of INACTIVE Job instances that have not been run within a user-defined lookback period, for example, a week or a month. The list of old Job instances is written in JSON format to the local file system. Job instances that have not yet been run are ignored as they may have just been created.
+Description:   This script writes a list of INACTIVE Job instances that have not been run within a user-defined lookback period, for example, a week or a month. The list of old Job instances is written in to a JSON file on the local file system. Job instances that have not yet been run are ignored as they may have just been created.
 
 Args:
 
@@ -68,7 +68,7 @@ Example Run:
 	Job: 'Oracle to Snowflake Bulk Load' Last Run Date: 2024-05-26 10:42:05
 	Job: 'Weather to MongoDB' Last Run Date: 2023-01-12 19:07:00
 	---------------------------------
-	Writing the list of old Job Instances to output file in sorted date order (oldest first)
+	Writing the list of old Job Instances to the output file in sorted date order (oldest first)
 	---------------------------------
 	Done
 
@@ -89,15 +89,7 @@ Here is an example of the data written to the output file <code>old_jobs.json</c
 
 ## Script #2 - export-old-jobs.py
 
-Description:   This script exports the Jobs instances listed in the input file. Note that Job Template Instances can't be exported; if once tries to export a Job Template Instance, an error message will be returned like this:
-
-```
-Exporting Job 'Check Database Table Schema - employee' into the file '/Users/mark/job-exports/Check Database Table Schema - employee.zip'
-Error exporting Job 'Check Database Table Schema - employee': JOBRUNNER_61: Exporting Job Template Instance Check Database Table Schema - employee is not supported, export Job Template 97ec0a88-4e19-4855-aece-3a9b13f390d7:8030c2e9-1a39-11ec-a5fe-97c8d4369386 instead.
-```
-
-Note that deleting Job Template Instances (as performed by script #3) does not delete the associated Job Templates.
-
+Description:   This script exports the Jobs instances listed in the input file. Note that Job Template Instances can't be exported, so they will be skipped.
 Args:
 
 - <code>input_file</code> - A JSON list of Job instances to export (i.e. the output file written by script #1)
@@ -106,7 +98,7 @@ Args:
 
 Usage:          <code>$ python3 export-old-jobs.py <input_file> <export_dir></code> 
 
-Usage Example:  <code>$ python3 export-old-jobs.py /Users/mark/old-jobs/old_jobs.json</code>
+Usage Example:  <code>$ python3 export-old-jobs.py /Users/mark/old-jobs/old_jobs.json /Users/mark/jobs-export</code>
 
 This script does not write a log, so if you want to capture the results of this script in a file, redirect its output like this:
 
@@ -177,7 +169,6 @@ This script does not write a log, so if you want to capture the results of this 
 $ python3 delete-old-jobs.py /Users/mark/old-jobs/old_jobs.json > /Users/mark/deleted-jobs.log
 
 A good test to perform at this point is to manually edit an old_jobs.json input file so there are only a couple of Jobs listed, and to run the script and confirm that those Jobs were correctly deleted.
-
 
 
 Example Run:

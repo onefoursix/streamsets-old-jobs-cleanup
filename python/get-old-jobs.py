@@ -157,7 +157,7 @@ for job in sch.jobs:
 # Write the old Jobs to the output file in ascending datetime order (i.e. oldest first)
 # This will overwrite a pre-existing file of the same name
 print("---------------------------------")
-print('Writing the list of old Job Instances to output file in sorted date order (oldest first)')
+print('Writing the list of old Job Instances to the output file in sorted date order (oldest first)')
 with open(output_file, 'w') as output_file:
     for last_run_millis in sorted(old_jobs.keys()):
         job = old_jobs[last_run_millis]
