@@ -4,7 +4,8 @@
 #
 # DESCRIPTION:    This script exports the Jobs instances listed in the input file.
 #
-# ARGS:           - input_file - A JSON list of Job instances to export.
+# ARGS:           - input_file - A JSON list of Job instances to export.  Note that Job Template
+#                                Instances can't be exported, so they will be skipped.
 #
 #                 - export_dir - The directory to write the exported Jobs instances to.
 #                                The directory will be created if it does not exist.
