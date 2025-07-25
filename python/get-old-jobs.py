@@ -47,23 +47,36 @@ def millis_to_datetime_string(millis):
     dt_string = dt.strftime('%Y-%m-%d %H:%M:%S')
     return dt_string
 
-# Method that validates that the last_run_threshold command line parameter is a valid date and is at
-# least one day behind the current date. Returns the last_run_threshold as millis or None if the parameter is not valid.
-def validate_last_run_threshold_parameter(last_run_threshold_str):
+# Method that validates that the last_run_threshold command line parameter is a valid date
+def last_run_threshold_parameter_is_a_date(last_run_threshold_str):
     try:
-        the_last_run_threshold = datetime.strptime(last_run_threshold_str, "%Y-%m-%d")
-        if not the_last_run_threshold.date() <= date.today() - timedelta(days=1):
-            print(
-                f"Error: The last_run_threshold parameter \'{last_run_threshold_str}\' is not at least one day earlier than the current date.")
-            return None
-        if the_last_run_threshold is None:
-            return None
-        else:
-            the_last_run_threshold_millis = int(the_last_run_threshold.timestamp() * 1000)
-            return the_last_run_threshold_millis
+        # This line will throw an exception if the date string is not valid
+        datetime.strptime(last_run_threshold_str, "%Y-%m-%d")
+        return True
     except ValueError:
         print(f"Error: The last_run_threshold parameter \'{last_run_threshold_str}\' is not a valid date in yyyy-mm-dd format.")
-        return None
+    return False
+
+# Method that validates that the last_run_threshold command line parameter is at
+# least one day behind the current date.
+def last_run_threshold_parameter_is_at_least_one_day_old(last_run_threshold_str):
+    the_last_run_threshold = datetime.strptime(last_run_threshold_str, "%Y-%m-%d")
+    if the_last_run_threshold.date() <= date.today() - timedelta(days=1):
+        return True
+    else:
+        print(f"Error: The last_run_threshold parameter \'{last_run_threshold_str}\' is not at least one day earlier than the current date.")
+    return False
+
+# Method to convert datetime string to millis
+def convert_datetime_string_to_millis(datetime_string):
+    try:
+        dt = datetime.strptime(datetime_string, "%Y-%m-%d")
+        millis = int(dt.timestamp() * 1000)
+        return millis
+    except Exception as e:
+        print(f"Error: Error converting \'{datetime_string}\' to millis: \'{e}\'.")
+    return None
+
 
 
 # Method that validates the output file and creates the directories in the path if necessary.
@@ -111,9 +124,13 @@ if len(sys.argv) != 3:
 
 # Validate the last_run_threshold parameter
 last_run_threshold = sys.argv[1]
-last_run_threshold_millis = validate_last_run_threshold_parameter(last_run_threshold)
+last_run_threshold_millis = None
+if last_run_threshold_parameter_is_a_date(last_run_threshold) and last_run_threshold_parameter_is_at_least_one_day_old(last_run_threshold):
+    last_run_threshold_millis = convert_datetime_string_to_millis(last_run_threshold)
+
 if last_run_threshold_millis is None:
     sys.exit(1)
+
 print("---------------------------------")
 print(f"last_run_threshold: '{last_run_threshold}'")
 print("---------------------------------")
