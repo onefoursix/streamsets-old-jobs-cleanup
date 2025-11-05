@@ -12,8 +12,6 @@ The scripts perform the following actions and are intended to be run in the foll
 
 ***
 Note that all three of these scripts could relatively easily be clubbed together into a single script, and one could add a "dry run" feature, but I chose to use three separate scripts so the critical "delete Job" logic (in script #3) could more easily be inspected for correctness.  Additionally, this approach allows the user to edit the list of old Jobs created by the first script to control which Job instances will be deleted by the third script.
-
-Note also that the scripts rely on an external file to pass around the list of Jobs, rather than using Jog tags to flag Job instances for deletion.  This approach is needed because one can't currently add tags to Job Template Instances.
 ***
 
 See the details for running each script below.
